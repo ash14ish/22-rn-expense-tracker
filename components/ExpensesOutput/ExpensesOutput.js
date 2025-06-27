@@ -2,19 +2,29 @@ import { StyleSheet, View, Text } from "react-native";
 import { GlobalStyles } from "../../utils/styles";
 import ExpensesList from "./ExpensesList";
 import ExpensesSummary from "./ExpensesSummary";
+import Loader from "../UI/Loader";
+import { useEffect, useState } from "react";
 
 function ExpensesOutput({ expenses, expensesPeriod, fallbackText }) {
+  const [isFetching, setIsFetching] = useState(true);
+
   let content = <Text style={styles.infoText}>{fallbackText}</Text>;
+
+  useEffect(() => {
+    setTimeout(() => setIsFetching(false), 1500);
+  }, []);
 
   if (expenses.length > 0) {
     content = <ExpensesList expenses={expenses} />;
   }
 
   return (
-    <View style={styles.container}>
-      <ExpensesSummary expenses={expenses} periodName={expensesPeriod} />
-      {content}
-    </View>
+    <Loader isFetching={isFetching}>
+      <View style={styles.container}>
+        <ExpensesSummary expenses={expenses} periodName={expensesPeriod} />
+        {content}
+      </View>
+    </Loader>
   );
 }
 

@@ -4,8 +4,11 @@ import IconButton from "../components/UI/IconButton";
 import { GlobalStyles } from "../utils/styles";
 import { ExpensesContext } from "../store/expenses-context";
 import ExpenseForm from "../components/ExpensesOutput/ManageExpense/ExpenseForm";
+import Loader from "../components/UI/Loader";
+import { useState } from "react";
 
 function ManageExpense({ route, navigation }) {
+  const [isFetching, setIsFetching] = useState(false);
   const expensesCtx = useContext(ExpensesContext);
 
   const editedExpenseId = route.params?.expenseId;
@@ -21,8 +24,11 @@ function ManageExpense({ route, navigation }) {
     });
   }, [navigation, isEditing]);
 
-  function deleteExpenseHandler() {
+  async function deleteExpenseHandler() {
+    setIsFetching(true);
     expensesCtx.deleteExpense(editedExpenseId);
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setIsFetching(false);
     navigation.goBack();
   }
 
@@ -30,35 +36,40 @@ function ManageExpense({ route, navigation }) {
     navigation.goBack();
   }
 
-  function confirmHandler(expenseData) {
+  async function confirmHandler(expenseData) {
+    setIsFetching(true);
     if (isEditing) {
       expensesCtx.updateExpense(editedExpenseId, expenseData);
     } else {
       expensesCtx.addExpense(expenseData);
     }
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setIsFetching(false);
     navigation.goBack();
   }
 
   return (
-    <View style={styles.container}>
-      <ExpenseForm
-        submitButtonLabel={isEditing ? "Update" : "Add"}
-        onSubmit={confirmHandler}
-        onCancel={cancelHandler}
-        defaultValues={selectedExpense}
-      />
+    <Loader isFetching={isFetching}>
+      <View style={styles.container}>
+        <ExpenseForm
+          submitButtonLabel={isEditing ? "Update" : "Add"}
+          onSubmit={confirmHandler}
+          onCancel={cancelHandler}
+          defaultValues={selectedExpense}
+        />
 
-      {isEditing && (
-        <View style={styles.deleteContainer}>
-          <IconButton
-            icon="trash"
-            color={GlobalStyles.colors.error500}
-            size={36}
-            onPress={deleteExpenseHandler}
-          />
-        </View>
-      )}
-    </View>
+        {isEditing && (
+          <View style={styles.deleteContainer}>
+            <IconButton
+              icon="trash"
+              color={GlobalStyles.colors.error500}
+              size={36}
+              onPress={deleteExpenseHandler}
+            />
+          </View>
+        )}
+      </View>
+    </Loader>
   );
 }
 

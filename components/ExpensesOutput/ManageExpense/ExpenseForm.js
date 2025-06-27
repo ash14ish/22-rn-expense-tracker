@@ -72,6 +72,7 @@ function ExpenseForm({ defaultValues, submitButtonLabel, onCancel, onSubmit }) {
           label="Amount"
           invalid={!inputs.amount.isValid}
           textInputConfig={{
+            placeholder: "e.g. 4.22",
             keyboardType: "decimal-pad",
             onChangeText: inputChangedHandler.bind(this, "amount"),
             value: inputs.amount.value,
@@ -94,6 +95,7 @@ function ExpenseForm({ defaultValues, submitButtonLabel, onCancel, onSubmit }) {
         label="Description"
         invalid={!inputs.description.isValid}
         textInputConfig={{
+          placeholder: "Enter description...",
           multiline: true,
           onChangeText: inputChangedHandler.bind(this, "description"),
           value: inputs.description.value,
