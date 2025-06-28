@@ -10,6 +10,18 @@ import { GlobalStyles } from "./utils/styles";
 import { Ionicons } from "@expo/vector-icons";
 import IconButton from "./components/UI/IconButton";
 import ExpensesContextProvider from "./store/expenses-context";
+import * as Notifications from "expo-notifications";
+import { useEffect } from "react";
+import { Alert, Platform } from "react-native";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
@@ -60,6 +72,57 @@ function ExpensesOverview() {
 }
 
 export default function App() {
+  useEffect(() => {
+    const subscription1 = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        console.log(
+          "notification received:: ",
+          notification.request.content.data
+        );
+      }
+    );
+    const subscription2 = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        console.log(
+          "notification interacted:: ",
+          response.notification.request.content.data
+        );
+      }
+    );
+
+    return () => {
+      subscription1.remove();
+      subscription2.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    async function configureNotificationsPermissions() {
+      const { status } = await Notifications.getPermissionsAsync();
+      let finalStatus = status;
+      if (finalStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        let finalStatus = status;
+        if (finalStatus !== "granted") {
+          Alert.alert(
+            "Permissions Required",
+            "Permissions for notifications will be required for expense management notifications."
+          );
+          return;
+        }
+      }
+
+      if (Platform.OS === "android") {
+        await Notifications.setNotificationChannelAsync("default", {
+          name: "default",
+          importance: Notifications.AndroidImportance.DEFAULT,
+        });
+      }
+    }
+
+    configureNotificationsPermissions();
+  }, []);
+
   return (
     <>
       <StatusBar style="light" />

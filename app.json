@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "rn-expense-tracker",
+    "name": "Expense Tracker",
     "slug": "rn-expense-tracker",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -20,10 +20,27 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "package": "com.ashish7347.expensetracker",
       "edgeToEdgeEnabled": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./local/assets/adaptive-icon.png",
+          "color": "#ffffff",
+          "defaultChannel": "default",
+          "enableBackgroundRemoteNotifications": false
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "ec9b1d97-871f-48bd-87fa-016f7e053a6f"
+      }
     }
   }
 }

@@ -6,6 +6,7 @@ import { ExpensesContext } from "../store/expenses-context";
 import ExpenseForm from "../components/ExpensesOutput/ManageExpense/ExpenseForm";
 import Loader from "../components/UI/Loader";
 import { useState } from "react";
+import * as Notifications from "expo-notifications";
 
 function ManageExpense({ route, navigation }) {
   const [isFetching, setIsFetching] = useState(false);
@@ -27,6 +28,15 @@ function ManageExpense({ route, navigation }) {
   async function deleteExpenseHandler() {
     setIsFetching(true);
     expensesCtx.deleteExpense(editedExpenseId);
+    Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Expense Deleted",
+        body: `Expense - ${selectedExpense?.description}`,
+        data: selectedExpense,
+      },
+      trigger: { seconds: 1 },
+    });
+
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsFetching(false);
     navigation.goBack();
@@ -43,6 +53,15 @@ function ManageExpense({ route, navigation }) {
     } else {
       expensesCtx.addExpense(expenseData);
     }
+
+    Notifications.scheduleNotificationAsync({
+      content: {
+        title: `Expense ${isEditing ? "Updated" : "Added"}`,
+        body: `Expense - ${expenseData?.description}`,
+        data: isEditing ? selectedExpense : expenseData,
+      },
+      trigger: { seconds: 1 },
+    });
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsFetching(false);
     navigation.goBack();
