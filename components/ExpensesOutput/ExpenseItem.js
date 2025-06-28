@@ -1,8 +1,11 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { GlobalStyles } from "../../utils/styles";
-import moment from "moment";
+import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
 import { useNavigation } from "@react-navigation/native";
 import { APP_SCREENS } from "../../utils/constants";
+
+dayjs.extend(advancedFormat);
 
 function ExpenseItem({ id, description, amount, date }) {
   const navigation = useNavigation();
@@ -22,7 +25,7 @@ function ExpenseItem({ id, description, amount, date }) {
             {description}
           </Text>
           <Text style={styles.textBase}>
-            {moment(date).format("Do MMM, YY")}
+            {dayjs(date).format("Do MMM, YY")}
           </Text>
         </View>
         <View style={styles.amountContainer}>

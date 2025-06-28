@@ -30,7 +30,7 @@
       [
         "expo-notifications",
         {
-          "icon": "./local/assets/adaptive-icon.png",
+          "icon": "./assets/adaptive-icon.png",
           "color": "#ffffff",
           "defaultChannel": "default",
           "enableBackgroundRemoteNotifications": false
