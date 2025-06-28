@@ -17,16 +17,38 @@ function ExpensesOutput({ expenses, expensesPeriod, fallbackText }) {
   }, []);
 
   useEffect(() => {
-    async function getPushToken() {
+    async function configureNotificationsPermissions() {
+      const { status } = await Notifications.getPermissionsAsync();
+      let finalStatus = status;
+      if (finalStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        let finalStatus = status;
+        if (finalStatus !== "granted") {
+          Alert.alert(
+            "Permissions Required",
+            "Permissions for notifications will be required for expense management notifications."
+          );
+          return;
+        }
+      }
+
       try {
         const pushTokenData = await Notifications.getExpoPushTokenAsync();
         setPushToken(pushTokenData.data);
       } catch (error) {
         console.error("Failed to get push token:", error);
       }
+
+      if (Platform.OS === "android") {
+        await Notifications.setNotificationChannelAsync("default", {
+          name: "default",
+          importance: Notifications.AndroidImportance.DEFAULT,
+          sound: "default",
+        });
+      }
     }
 
-    getPushToken();
+    configureNotificationsPermissions();
   }, []);
 
   if (expenses.length > 0) {

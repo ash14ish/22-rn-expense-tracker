@@ -16,7 +16,7 @@ import { Alert, Platform } from "react-native";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldPlaySound: false,
+    shouldPlaySound: true,
     shouldSetBadge: false,
     shouldShowBanner: true,
     shouldShowList: true,
@@ -116,6 +116,7 @@ export default function App() {
         await Notifications.setNotificationChannelAsync("default", {
           name: "default",
           importance: Notifications.AndroidImportance.DEFAULT,
+          sound: "default",
         });
       }
     }
